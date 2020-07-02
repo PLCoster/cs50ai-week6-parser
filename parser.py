@@ -1,5 +1,6 @@
 import nltk
 import sys
+import re
 
 TERMINALS = """
 Adj -> "country" | "dreadful" | "enigmatical" | "little" | "moist" | "red"
@@ -66,10 +67,10 @@ def preprocess(sentence):
     test = re.compile('[a-zA-Z]')
 
     # Tokenize using nltk:
-    output = nltk.word_tokenize(sentence)
+    tokens = nltk.word_tokenize(sentence)
 
     # Return list of lowercase strings that match Regex:
-    return [entry.lower() for entry in output if test.match(entry)]
+    return [entry.lower() for entry in tokens if test.match(entry)]
 
 
 def np_chunk(tree):
@@ -83,11 +84,11 @@ def np_chunk(tree):
     chunks = []
 
     # Convert Tree to Parented Tree
-    ptree = nltk.ParentedTree()
-    ptree = nltk.ptree.convert(tree)
+    ptree = nltk.tree.ParentedTree.convert(tree)
 
-    # Iterate through all subtrees in the
+    # Iterate through all subtrees in the tree:
     for subtree in ptree.subtrees():
+        # If subtree is labelled as a noun then parent is a noun phrase chunk
         if subtree.label() == "N":
             chunks.append(subtree.parent())
 
