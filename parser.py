@@ -62,7 +62,14 @@ def preprocess(sentence):
     and removing any word that does not contain at least one alphabetic
     character.
     """
-    raise NotImplementedError
+    # Regex to match words containing at least one a-z, A-Z:
+    test = re.compile('[a-zA-Z]')
+
+    # Tokenize using nltk:
+    output = nltk.word_tokenize(sentence)
+
+    # Return list of lowercase strings that match Regex:
+    return [entry.lower() for entry in output if test.match(entry)]
 
 
 def np_chunk(tree):
@@ -72,7 +79,19 @@ def np_chunk(tree):
     whose label is "NP" that does not itself contain any other
     noun phrases as subtrees.
     """
-    raise NotImplementedError
+
+    chunks = []
+
+    # Convert Tree to Parented Tree
+    ptree = nltk.ParentedTree()
+    ptree = nltk.ptree.convert(tree)
+
+    # Iterate through all subtrees in the
+    for subtree in ptree.subtrees():
+        if subtree.label() == "N":
+            chunks.append(subtree.parent())
+
+    return chunks
 
 
 if __name__ == "__main__":
